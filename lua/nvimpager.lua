@@ -315,12 +315,15 @@ local function pager_mode()
       nvim.nvim_out_write("The file is bigger than 100000 lines, disableing "
 			  .. "escape sequence highlighting.")
     else
-      --nvim.nvim_buf_set_option(0, 'modifiable', true)
+      nvim.nvim_set_option('modelines', 0)
+      nvim.nvim_buf_set_option(0, 'modeline', false)
+      nvim.nvim_buf_set_option(0, 'modifiable', true)
+      nvim.nvim_buf_set_option(0, 'readonly', false)
       nvim.nvim_buf_set_option(0, 'scrollback', linecount + 4)
-      nvim.nvim_command('set nomodeline')
       nvim.nvim_command([[function! NvimPagerTermCleanupCallback(a, b, c) dict
-	set modifiable
-	]] .. linecount .. [[, $ delete
+	setlocal modifiable
+	setlocal noreadonly
+	silent ]] .. linecount .. [[, $ delete
 	1
       endfunction]])
       nvim.nvim_call_function('termopen', {{'cat', nvim.nvim_buf_get_name(0)},
