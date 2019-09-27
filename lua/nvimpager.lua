@@ -309,8 +309,16 @@ end
 -- Setup function for the VimEnter autocmd.
 local function pager_mode()
   if check_escape_sequences() then
-    -- Try to highlight ansi escape sequences with the AnsiEsc plugin.
-    nvim.nvim_command('AnsiEsc')
+    -- Try to highlight ansi escape sequences with a terminal buffer
+    local linecount = nvim.nvim_buf_line_count(0)
+    if linecount > 99995 then -- the maximum scrollback value
+      nvim.nvim_out_write("The file is bigger than 100000 lines, disableing "
+			  .. "escape sequence highlighting.")
+    else
+      --nvim.nvim_buf_set_option(0, 'modifiable', true)
+      nvim.nvim_buf_set_option(0, 'scrollback', linecount + 4)
+      nvim.nvim_call_function('termopen', {{'cat', nvim.nvim_buf_get_name(0)}, {this='dict'}})
+    end
   end
   nvim.nvim_buf_set_option(0, 'modifiable', false)
   nvim.nvim_buf_set_option(0, 'modified', false)
