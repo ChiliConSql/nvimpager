@@ -325,6 +325,8 @@ local function pager_mode()
 	setlocal noreadonly
 	silent ]] .. linecount .. [[, $ delete
 	1
+	setlocal nomodifiable
+	setlocal nomodified
       endfunction]])
       nvim.nvim_call_function('termopen', {{'cat', nvim.nvim_buf_get_name(0)},
 	{on_exit = 'NvimPagerTermCleanupCallback'}})
